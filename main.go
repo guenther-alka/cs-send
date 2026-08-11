@@ -62,6 +62,9 @@ MAIL:
   --insecure-skip-verify                 skip TLS cert verification
                                           (self-hosted relay with a
                                           self-signed cert only)
+  --logfile <path>                       append a timestamped result
+                                          line per run (never contains
+                                          --key/passwords/tokens)
 
 CHAT:
   --provider discord|telegram|slack|ntfy|gotify   required
@@ -75,7 +78,9 @@ CHAT:
                         gotify: the server base URL, e.g. https://gotify.example.com
   --token <token>       gotify: the application token (with --url)
                         telegram: the bot token (with --chat-id)
-  --chat-id <id>        telegram only, with --token`)
+  --chat-id <id>        telegram only, with --token
+  --logfile <path>      append a timestamped result line per run
+                        (never contains --token/webhook secrets)`)
 }
 
 func mailCmd(args []string) {
@@ -96,6 +101,7 @@ func mailCmd(args []string) {
 	user := fs.String("user", "", "SMTP auth username")
 	key := fs.String("key", "", "SMTP auth password (Gmail: App Password)")
 	insecure := fs.Bool("insecure-skip-verify", false, "skip TLS cert verification")
+	logfile := fs.String("logfile", "", "append a timestamped result line per run")
 	fs.Parse(args)
 
 	if *to == "" {
@@ -168,9 +174,11 @@ func mailCmd(args []string) {
 		InsecureSkipVerify: *insecure,
 	}
 	if err := mail.Send(cfg, msg); err != nil {
+		logLine(*logfile, "mail FAILED to=%s subject=%q smtp=%s:%d: %v", *to, *subject, *smtpHost, *smtpPort, err)
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
+	logLine(*logfile, "mail sent to=%s subject=%q smtp=%s:%d", *to, *subject, *smtpHost, *smtpPort)
 	fmt.Println("sent")
 }
 
@@ -183,6 +191,7 @@ func chatCmd(args []string) {
 	url := fs.String("url", "", "webhook/topic/base URL, see usage per provider")
 	token := fs.String("token", "", "gotify app token, or telegram bot token")
 	chatID := fs.String("chat-id", "", "telegram only")
+	logfile := fs.String("logfile", "", "append a timestamped result line per run")
 	fs.Parse(args)
 
 	if *text == "" {
@@ -228,10 +237,22 @@ func chatCmd(args []string) {
 	}
 
 	err := n.Send(context.Background(), chat.Message{Text: *text, Title: *title, Priority: *priority})
+	// Log destination info only where it's not itself a bearer secret:
+	// a Discord/Slack/ntfy/Gotify webhook URL grants send access to
+	// anyone who has it, same threat model as a password -- never
+	// written to the logfile. Telegram's chat-id is not sensitive on
+	// its own (useless without the bot token, which IS redacted here
+	// too); provider name is always safe to log.
+	dest := *provider
+	if *provider == "telegram" {
+		dest = fmt.Sprintf("telegram chat-id=%s", *chatID)
+	}
 	if err != nil {
+		logLine(*logfile, "chat FAILED provider=%s: %v", dest, err)
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
+	logLine(*logfile, "chat sent provider=%s", dest)
 	fmt.Println("sent")
 }
 

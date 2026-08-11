@@ -53,6 +53,13 @@ cs-send mail --to a@b.com --subject "Status" \
 Full flag reference: `cs-send mail` with no other arguments prints
 usage.
 
+**`--logfile <path>`** (both `mail` and `chat`) appends one timestamped
+result line per run -- useful when called from cron or a napp-it CS
+job, where stdout/stderr don't persist. Never contains credentials:
+`--key`/SMTP passwords, chat webhook URLs, and bot tokens are all
+redacted from what gets written (a webhook URL grants send access to
+anyone who has it, same threat model as a password).
+
 ---
 
 ## Chat
