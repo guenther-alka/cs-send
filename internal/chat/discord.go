@@ -15,9 +15,10 @@ func (d Discord) Send(ctx context.Context, msg Message) error {
 		text = "**" + msg.Title + "**\n" + text
 	}
 	// Discord's webhook payload: https://discord.com/developers/docs/resources/webhook#execute-webhook
-	// "content" is the only field this needs; Discord caps it at 2000
-	// chars server-side and returns 400 if exceeded -- not pre-validated
-	// here, the caller sees Discord's own error message via postJSON's
-	// error-body surfacing.
+	// "content" is the only field this needs. Discord's own 2000-char
+	// hard limit is enforced here (truncate, see truncate.go) BEFORE
+	// sending -- so a caller handing this a long report gets a clearly
+	// marked truncated alert instead of a raw 400 rejection.
+	text = truncate(text, MaxLengthDiscord)
 	return postJSON(ctx, d.WebhookURL, map[string]string{"content": text}, nil)
 }

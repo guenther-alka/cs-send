@@ -22,7 +22,7 @@ func (g Gotify) Send(ctx context.Context, msg Message) error {
 	base := strings.TrimRight(g.BaseURL, "/")
 	endpoint := base + "/message?token=" + url.QueryEscape(g.Token)
 	body := map[string]any{
-		"message": msg.Text,
+		"message": truncate(msg.Text, MaxLengthGotify),
 	}
 	if msg.Title != "" {
 		body["title"] = msg.Title

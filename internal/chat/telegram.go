@@ -30,6 +30,7 @@ func (t Telegram) Send(ctx context.Context, msg Message) error {
 	if msg.Title != "" {
 		text = "*" + msg.Title + "*\n" + text
 	}
+	text = truncate(text, MaxLengthTelegram)
 	base := t.BaseURL
 	if base == "" {
 		base = "https://api.telegram.org"

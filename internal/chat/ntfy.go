@@ -29,5 +29,6 @@ func (n Ntfy) Send(ctx context.Context, msg Message) error {
 	if msg.Priority > 0 {
 		headers["Priority"] = strconv.Itoa(msg.Priority) // 1 (min) .. 5 (max), ntfy default 3
 	}
-	return postRaw(ctx, n.URL, []byte(msg.Text), "text/plain; charset=utf-8", headers)
+	text := truncate(msg.Text, MaxLengthNtfy)
+	return postRaw(ctx, n.URL, []byte(text), "text/plain; charset=utf-8", headers)
 }

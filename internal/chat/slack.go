@@ -15,6 +15,7 @@ func (s Slack) Send(ctx context.Context, msg Message) error {
 	if msg.Title != "" {
 		text = "*" + msg.Title + "*\n" + text
 	}
+	text = truncate(text, MaxLengthSlack)
 	// https://api.slack.com/messaging/webhooks -- "text" is the only
 	// required field for a plain message.
 	return postJSON(ctx, s.WebhookURL, map[string]string{"text": text}, nil)
