@@ -9,6 +9,7 @@ Part of the [napp-it CS](https://napp-it.org) toolset (same build model
 as [cs-sync](https://github.com/guenther-alka/cs-sync) and
 [cs-stream](https://github.com/guenther-alka/cs-stream)), but fully
 usable standalone.
+csweb-gui deploys and updates this manually per member menu About > Download cs-tools
 
 ---
 
