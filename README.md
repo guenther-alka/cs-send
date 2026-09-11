@@ -5,7 +5,7 @@ attachments) and chat alerts (Discord, Telegram, Slack, ntfy, Gotify)
 from the command line. One static binary, pure Go standard library --
 no external dependencies at all.
 
-Part of the [napp-it CS](https://napp-it.org) toolset (same build model
+Part of the [napp-it 4ai (client-server edition)](https://napp-it.org) toolset (same build model
 as [cs-sync](https://github.com/guenther-alka/cs-sync) and
 [cs-stream](https://github.com/guenther-alka/cs-stream)), but fully
 usable standalone.
