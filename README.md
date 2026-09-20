@@ -5,10 +5,11 @@ attachments) and chat alerts (Discord, Telegram, Slack, ntfy, Gotify)
 from the command line. One static binary, pure Go standard library --
 no external dependencies at all.
 
-Part of the [napp-it 4ai (client-server edition)](https://napp-it.org) toolset (same build model
-as [cs-sync](https://github.com/guenther-alka/cs-sync) and
-[cs-stream](https://github.com/guenther-alka/cs-stream)), but fully
-usable standalone.
+Signed-off-by: Guenther Alka gea@napp-it.org<br>
+Concept Co-Authored-By: Claude Fable 5 noreply@anthropic.com<br>
+
+Part of the [napp-it 4ai (client-server edition)](https://napp-it.org) cluster tooling family
+(alongside [cs-tools](https://www.napp-it.org/cs-tools_en.html))
 csweb-gui deploys and updates this manually per member menu About > Download cs-tools
 
 ---
